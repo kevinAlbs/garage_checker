@@ -324,6 +324,7 @@ def run (display):
                 display_lines (display, ["Health check: {}...".format(new_status), get_time_str()])
                 update_status (status)
                 display_lines (display, ["Health check: {}... posted".format(new_status), get_time_str()])
+                last_healthcheck = time.ticks_ms()
 
             time.sleep(5)
         except Exception as exc:    
