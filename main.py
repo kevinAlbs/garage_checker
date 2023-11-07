@@ -296,17 +296,22 @@ def load_display ():
     display = ssd1306.SSD1306_I2C(128, 64, i2c)
     return display
 
-def is_open():
-    return False
+def is_open(reed_pin):
+    return reed_pin.value() == 0
 
 def run (display):
     status = ""
     last_healthcheck = time.ticks_ms()
 
+    REED_SWITCH_IN = 13 # D8
+    reed_pin = machine.Pin (REED_SWITCH_IN, machine.Pin.IN, machine.Pin.PULL_UP)
+
     while True:
         print ("tick ... {}".format(get_time_str()))
         try:
-            if is_open ():
+            display_lines (display, ["{}".format(status), get_time_str()])
+
+            if is_open (reed_pin):
                 new_status = "Open"
             else:
                 new_status = "Closed"
