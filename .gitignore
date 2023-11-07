@@ -1,0 +1,12 @@
+__pycache__
+.venv
+.vscode
+config.py
+# Ignore image
+*.bin
+appsecrets.py
+server_logs.txt
+check_logs.txt
+secrets.py
+testdata
+data
