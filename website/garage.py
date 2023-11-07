@@ -12,6 +12,17 @@ from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 
+# Create empty data files if they do not already exist.
+for path in [pathlib.Path("testdata"), pathlib.Path("data")]:
+    if not path.exists():
+        path.mkdir()
+    status_file = path / "status.txt"
+    if not status_file.exists():
+        status_file.touch()
+    log_file = path / "log.txt"
+    if not log_file.exists():
+        log_file.touch()
+
 def encrypt (plaintext : bytes, iv=None):
     if iv is None:
         iv = os.urandom(16)
