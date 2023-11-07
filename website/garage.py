@@ -108,7 +108,7 @@ def update_status():
         # Do not update production data.
         path = pathlib.Path("testdata")
     else:
-        path = pathlib.Path(".")
+        path = pathlib.Path("data")
     
     with open(path / "log.txt", "a") as file_log:
         file_log.write(datetime.datetime.now().isoformat() + " " + json.dumps(payload) + "\n")
