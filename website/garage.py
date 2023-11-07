@@ -104,6 +104,8 @@ def update_status():
     del payload["token"]
     # Add UNIX timestamp to payload.
     payload["unix_timestamp"] = time.time()
+    tz = datetime.timezone(datetime.timedelta(hours=-5))
+    payload["human_time"] = datetime.datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     if app.testing or "testing" in payload and payload["testing"]:
         # Do not update production data.
         path = pathlib.Path("testdata")
