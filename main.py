@@ -25,7 +25,7 @@ def get_ssid():
     return config.PRODUCTION_WIFI_SSID
 
 def get_http_endpoint():
-    return "http://192.168.1.183:5000"
+    return "http://garage.kevinalbs.com"
 
 def in_debug_mode ():
     btn = machine.Pin(config.DEBUG_PIN, machine.Pin.IN, machine.Pin.PULL_UP)
