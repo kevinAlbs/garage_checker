@@ -164,7 +164,7 @@ def home():
         status_dict = json.loads(status_text)
         age = time.time() - status_dict["unix_timestamp"]
         age_minutes = int(age / 60)
-        return render_template("index.html", status=status_dict["status"], age_minutes=age_minutes)
+        return render_template("index.html", status=status_dict["status"], age_minutes=age_minutes, last_updated_secs=int(status_dict["unix_timestamp"]))
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):
