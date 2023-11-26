@@ -303,7 +303,7 @@ def run (display):
     status = ""
     last_healthcheck = time.ticks_ms()
 
-    REED_SWITCH_IN = 13 # D8
+    REED_SWITCH_IN = 13 # D7
     reed_pin = machine.Pin (REED_SWITCH_IN, machine.Pin.IN, machine.Pin.PULL_UP)
 
     while True:
