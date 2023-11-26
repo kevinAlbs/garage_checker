@@ -12,8 +12,8 @@
 </head>
 <body>
     <p>{{ age_minutes }} minutes ago, the garage door status was updated to <b>{{ status | lower }}</b>.</p>
-    {% if age_minutes > 60 %}
-    <p>Warning: last updated over 1 hour ago. Device may not be working.</p>
+    {% if age_minutes > 65 %}
+    <p>Warning: last updated over 1 hour and 5 minutes ago. Device may not be working.</p>
     {% endif %}
 </body>
 </html>
