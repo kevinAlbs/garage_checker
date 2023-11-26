@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from werkzeug.exceptions import BadRequest
 import appsecrets
 import os
@@ -160,7 +160,11 @@ def home():
         path = pathlib.Path("data")
     
     with open(path / "status.txt", "r") as file_status:
-        return file_status.read()
+        status_text = file_status.read()
+        status_dict = json.loads(status_text)
+        age = time.time() - status_dict["unix_timestamp"]
+        age_minutes = int(age / 60)
+        return render_template("index.html", status=status_dict["status"], age_minutes=age_minutes)
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):
