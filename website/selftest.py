@@ -30,7 +30,7 @@ class TestApp (unittest.TestCase):
     def test_update_status (self):
         with app.test_client() as client:
             payload = garage.encrypt(json.dumps({
-                "status": "open",
+                "status": "Open",
                 "token": self.get_token(client)
             }).encode("utf8")).hex()
             resp = client.post("/update_status", json={
@@ -64,7 +64,7 @@ class TestApp (unittest.TestCase):
     def test_rejects_without_token(self):
         with app.test_client() as client:
             payload = garage.encrypt(json.dumps({
-                "status": "open",
+                "status": "Open",
             }).encode("utf8")).hex()
             resp = client.post("/update_status", json={
                 "payload": payload
@@ -81,7 +81,7 @@ class TestApp (unittest.TestCase):
             token = json.dumps(token_dict)
 
             payload = garage.encrypt(json.dumps({
-                "status": "open",
+                "status": "Open",
                 "token": token
             }).encode("utf8")).hex()
             resp = client.post("/update_status", json={
@@ -94,7 +94,7 @@ class TestApp (unittest.TestCase):
         with app.test_client() as client:
             token = self.get_token(client)
             payload = garage.encrypt(json.dumps({
-                "status": "open",
+                "status": "Open",
                 "token": token
             }).encode("utf8")).hex()
             resp = client.post("/update_status", json={
@@ -105,7 +105,7 @@ class TestApp (unittest.TestCase):
             self.assertEqual(got["ok"], True, "expected ok, got: {}".format(got))
 
             payload = garage.encrypt(json.dumps({
-                "status": "open",
+                "status": "Open",
                 "token": token
             }).encode("utf8")).hex()
             resp = client.post("/update_status", json={
@@ -131,7 +131,7 @@ class TestApp (unittest.TestCase):
 
             # Expect using token1 to fail (was removed from cache).
             payload = garage.encrypt(json.dumps({
-                "status": "open",
+                "status": "Open",
                 "token": token1
             }).encode("utf8")).hex()
             resp = client.post("/update_status", json={
