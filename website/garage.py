@@ -127,6 +127,10 @@ def update_status():
         file_log.write(datetime.datetime.now().isoformat() + " " + json.dumps(payload) + "\n")
     with open(path / "status.txt", "w") as file_status:
         file_status.write(json.dumps(payload))
+    if payload["status"] == "Open":
+        with open(path / "last_open.txt", "w") as file_last_open:
+            file_last_open.write(json.dumps(payload))
+
     return {"ok": True}
 
 @app.route("/get_status", methods=["post"])
@@ -158,13 +162,27 @@ def home():
         path = pathlib.Path("testdata")
     else:
         path = pathlib.Path("data")
-    
+
+    last_open_path = path / "last_open.txt"
+    last_open_unix_timestamp_secs = None
+    if last_open_path.exists():
+        last_open_text = last_open_path.read_text()
+        last_open_dict = json.loads(last_open_text)
+        last_open_unix_timestamp_secs = int(last_open_dict["unix_timestamp"])
+
     with open(path / "status.txt", "r") as file_status:
         status_text = file_status.read()
         status_dict = json.loads(status_text)
-        age = time.time() - status_dict["unix_timestamp"]
-        age_minutes = int(age / 60)
-        return render_template("index.html", status=status_dict["status"], age_minutes=age_minutes, last_updated_secs=int(status_dict["unix_timestamp"]))
+
+    age = time.time() - status_dict["unix_timestamp"]
+    age_minutes = int(age / 60)
+
+    return render_template("index.html",
+                           status=status_dict["status"],
+                           age_minutes=age_minutes,
+                           last_updated_secs=int(status_dict["unix_timestamp"]),
+                           last_open_unix_timestamp_secs=last_open_unix_timestamp_secs
+                           )
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):

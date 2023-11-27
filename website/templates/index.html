@@ -20,16 +20,22 @@
     </style>
 </head>
 <body>
-    <p>{{ age_minutes }} minutes ago, the garage door status was updated to <b>{{ status | lower }}</b>.</p>
-    <small>Last status update was at <span data-lastupdatedsecs="{{ last_updated_secs }}"></span>.</small>
+    <p>Garage door status last updated to <b>{{ status | lower }}</b> {{ age_minutes}} minutes ago (<span data-unixtime="{{ last_updated_secs }}"></span>).</p>
     {% if age_minutes > 65 %}
     <p>Warning: last status update was over 1 hour and 5 minutes ago. Device may not be working.</p>
     {% endif %}
+
+    {% if last_open_unix_timestamp_secs and last_open_unix_timestamp_secs != last_updated_secs %}
+        Garage door status was last <b>open</b> at <span data-unixtime="{{ last_open_unix_timestamp_secs }}"></span>.
+    {% endif %}
+    
     <script>
-        const el = document.querySelector("[data-lastupdatedsecs]");
-        const dateUnixMS = parseInt(el.getAttribute("data-lastupdatedsecs")) * 1000;
-        const dateStr = (new Date(dateUnixMS)).toLocaleString();
-        el.innerHTML = dateStr;
+        const els = document.querySelectorAll("[data-unixtime]");
+        els.forEach((el) => {
+            const dateUnixMS = parseInt(el.getAttribute("data-unixtime")) * 1000;
+            const dateStr = (new Date(dateUnixMS)).toLocaleString();
+            el.innerHTML = dateStr;
+        })
     </script>
 
 </body>
