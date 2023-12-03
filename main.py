@@ -127,12 +127,14 @@ def get_token():
         raise Exception("No 'token' in response: {}".format(resp.text))
     return resp_dict["token"]
 
-def update_status(status, testing=False):
+def update_status(status, testing=False, health=False):
     endpoint = get_http_endpoint()
     token = get_token ()
     payload_dict = {'token': token, 'status': status}
     if testing:
         payload_dict["testing"] = True
+    if health:
+        payload_dict["health"] = True
     payload_plaintext = ujson.dumps(payload_dict)
     payload = encrypt(payload_plaintext.encode("utf8"))
     payload_hex = binascii.hexlify(payload)
@@ -327,7 +329,7 @@ def run (display):
                 print ("Doing health check")
                 # One hour passed. Update status as a health check.
                 display_lines (display, ["Health check: {}...".format(new_status), get_time_str()])
-                update_status (status)
+                update_status (status, health=True)
                 display_lines (display, ["Health check: {}... posted".format(new_status), get_time_str()])
                 last_healthcheck = time.ticks_ms()
 

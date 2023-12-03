@@ -165,7 +165,54 @@ class TestApp (unittest.TestCase):
         self.assertNotEqual(ciphertext, plaintext)
         self.assertEqual(plaintext, b"foo")
 
+    def test_update_health (self):
+        with app.test_client() as client:
+            payload = garage.encrypt(json.dumps({
+                "status": "Open",
+                "token": self.get_token(client),
+                "health": True
+            }).encode("utf8")).hex()
+            resp = client.post("/update_status", json={
+                "payload": payload
+            })
+            self.assertEqual(resp.status_code, 200, "Expected HTTP 200, got {} with text:\n{}".format(resp.status_code, resp.text))
+            got = resp.json
+            self.assertEqual(got["ok"], True, "expected ok, got: {}".format(got))
+        
+    def test_health_does_not_update_status (self):
+        with app.test_client() as client:
+            # Update status to "foo".
+            payload = garage.encrypt(json.dumps({
+                "status": "foo",
+                "token": self.get_token(client)
+            }).encode("utf8")).hex()
+            resp = client.post("/update_status", json={
+                "payload": payload
+            })
+            got = resp.json
+            self.assertEqual(got["ok"], True, "expected ok, got: {}".format(got))
 
+            # Send health check with status "bar".
+            payload = garage.encrypt(json.dumps({
+                "status": "bar",
+                "token": self.get_token(client),
+                "health": True
+            }).encode("utf8")).hex()
+            resp = client.post("/update_status", json={
+                "payload": payload
+            })
+            got = resp.json
+            self.assertEqual(got["ok"], True, "expected ok, got: {}".format(got))
+
+            payload = garage.encrypt(json.dumps({
+                "token": self.get_token(client)
+            }).encode("utf8")).hex()
+            resp = client.post("/get_status", json={
+                "payload": payload
+            })
+            got = resp.json
+            self.assertEqual(got["ok"], True, "expected ok, got: {}".format(got))
+            self.assertEqual(got["status"], "foo", "expected foo, got: {}".format(got))
 if __name__ == "__main__":
     unittest.main()
     

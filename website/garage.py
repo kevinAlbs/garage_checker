@@ -125,11 +125,17 @@ def update_status():
     
     with open(path / "log.txt", "a") as file_log:
         file_log.write(datetime.datetime.now().isoformat() + " " + json.dumps(payload) + "\n")
-    with open(path / "status.txt", "w") as file_status:
-        file_status.write(json.dumps(payload))
-    if payload["status"] == "Open":
-        with open(path / "last_open.txt", "w") as file_last_open:
-            file_last_open.write(json.dumps(payload))
+    if "health" in payload and payload["health"]:
+        # Health check only. Do not update status.
+        with open (path / "last_health.txt", "w") as file_last_health:
+            file_last_health.write(json.dumps(payload))
+    else:
+        # Not a health check. Update status.
+        with open(path / "status.txt", "w") as file_status:
+            file_status.write(json.dumps(payload))
+        if payload["status"] == "Open":
+            with open(path / "last_open.txt", "w") as file_last_open:
+                file_last_open.write(json.dumps(payload))
 
     return {"ok": True}
 
@@ -170,6 +176,17 @@ def home():
         last_open_dict = json.loads(last_open_text)
         last_open_unix_timestamp_secs = int(last_open_dict["unix_timestamp"])
 
+    last_health_path = path / "last_health.txt"
+    last_health_unix_timestamp_secs = None
+    last_health_age_minutes = 0
+    if last_health_path.exists():
+        last_health_text = last_health_path.read_text()
+        last_health_dict = json.loads(last_health_text)
+        last_health_unix_timestamp_secs = int(last_health_dict["unix_timestamp"])
+        last_health_age_secs = time.time() - last_health_dict["unix_timestamp"]
+        last_health_age_minutes = int(last_health_age_secs / 60)
+
+
     with open(path / "status.txt", "r") as file_status:
         status_text = file_status.read()
         status_dict = json.loads(status_text)
@@ -181,12 +198,13 @@ def home():
                            status=status_dict["status"],
                            age_minutes=age_minutes,
                            last_updated_secs=int(status_dict["unix_timestamp"]),
-                           last_open_unix_timestamp_secs=last_open_unix_timestamp_secs
+                           last_open_unix_timestamp_secs=last_open_unix_timestamp_secs,
+                           last_health_unix_timestamp_secs=last_health_unix_timestamp_secs,
+                           last_health_age_minutes=last_health_age_minutes
                            )
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):
-    print("request is: {}".format(request))
     if request.path == "/":
         # Use default exception handling.
         raise e
