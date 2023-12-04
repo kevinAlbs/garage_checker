@@ -22,7 +22,7 @@
 <body>
     <p>Garage door status last updated to <b>{{ status | lower }}</b> {{ age_minutes }} minutes ago (<span data-unixtime="{{ last_updated_secs }}"></span>).</p>
     {% if last_health_age_minutes %}
-    <p>Last health check was {{ age_minutes }} minutes ago (<span data-unixtime="{{ last_health_unix_timestamp_secs }}"></span>).</p>
+    <p>Last health check was {{ last_health_age_minutes }} minutes ago (<span data-unixtime="{{ last_health_unix_timestamp_secs }}"></span>).</p>
     {% endif %}
 
     {% if (last_health_age_minutes and last_health_age_minutes > 65) and age_minutes > 65 %}
