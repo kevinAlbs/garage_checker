@@ -22,7 +22,7 @@ def do_assert(stmt, msg):
 def get_ssid():
     if in_debug_mode():
         return config.WIFI_SSID
-    return config.PRODUCTION_WIFI_SSID
+    return config.WIFI_SSID
 
 def get_http_endpoint():
     return "http://garage.kevinalbs.com"
